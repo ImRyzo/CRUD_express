@@ -1,7 +1,7 @@
 Hi, its my first express CRUD
 
 
-git remote add origin https://https://github.com/ImRyzo/CRUD_express
+git remote add origin https://github.com/ImRyzo/CRUD_express
 
 git branch -M main
 
