@@ -1,12 +1,47 @@
 <%- include('../partials/__head') %>
-    <div class="container">
-      <%- include('../partials/__message') %>
-        <div class="row">
-            <div class="col">
-                <a href="/kategori/create" class="btn btn-sm btn-success">Tambah</a>
-                  
-            </div>
+<div class="container">
+    <%- include('../partials/__message') %>
+    <div class="row">
+        <div class="col">
+            <a href="/produk/create" class="btn btn-sm btn-success">Tambah</a>
         </div>
     </div>
+    <div class="row mt-3">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nama Produk</th>
+                        <th scope="col">Harga</th>
+                        <th scope="col">Gambar</th>
+                        <th scope="col">Kategori</th>
+                        <th scope="col">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% data.forEach((produk, index) => { %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td><%= produk.nama_produk %></td>
+                            <td><%= produk.harga_produk %></td>
+                            <td>
+                                <% if(produk.gambar_produk) { %>
+                                    <img src="/images/produk/<%= produk.gambar_produk %>" alt="<%= produk.nama_produk %>" style="max-width: 100px;">
+                                <% } else { %>
+                                    <span>Tidak ada gambar</span>
+                                <% } %>
+                            </td>
+                            <td><%= produk.nama_kategori %></td>
+                            <td>
+                                <a href="/produk/edit/<%= produk.id_produk %>" class="btn btn-sm btn-primary">Edit</a>
+                                <a href="/produk/delete/<%= produk.id_produk %>" class="btn btn-sm btn-danger">Hapus</a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 <%- include('../partials/__foot') %>
-

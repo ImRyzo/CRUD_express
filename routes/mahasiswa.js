@@ -1,34 +1,49 @@
-const express = require('express');
-const model_mahasiswa = require('../module/m_mahasiswa');
+const express = require(`express`);
+const module_mahasiswa = require("../module/m_mahasiswa");
 const router = express.Router();
 
-const handleAsync = fn => (req, res, next) => {
-  Promise.resolve(fn(req, res, next)).catch(next);
-};
+router.get(`/`, async (req,res,next) => {
+    let rows = await module_mahasiswa.getAll();
+    res.render(`mahasiswa/index`,{
+        data: rows
+    });
+})
 
-const renderTemplateWithData = async (res, template, data) => {
-  const rows = await model_mahasiswa.getAll();
-  res.render(template, { ...data, data: rows });
-};
+router.get(`/create`, (req,res,next) => {
+    res.render(`mahasiswa/create`);
+})
 
-router.get('/', handleAsync(async (req, res) => {
-  await renderTemplateWithData(res, 'mahasiswa/index', {});
-}));
-
-router.get('/create', (req, res) => {
-  res.render('mahasiswa/create');
-});
-
-router.post('/store', handleAsync(async (req, res) => {
-  const data = { ...req.body };
-  await model_mahasiswa.writeData(data);
-  req.flash('success', 'Berhasil menambahkan data');
-  res.redirect('/mahasiswa');
-}));
+router.post(`/store`, async (req,res,next) => {
+    try{
+        let {nrp,nama_depan,nama_belakang,jenis_kelamin,agama,umur,tinggi_badan,gol_darah,alamat,hobi,email,no_telpon,asal_sekolah,tahun_lulus} = req.body;
+        let data = {
+            nrp,
+            nama_depan,
+            nama_belakang,
+            jenis_kelamin,
+            agama,
+            umur,
+            tinggi_badan,
+            gol_darah,
+            alamat,
+            hobi,
+            email,
+            no_telpon,
+            asal_sekolah,
+            tahun_lulus
+        };
+        await module_mahasiswa.writeData(data);
+        req.flash(`success`,`berhasil menambahkan data`);
+        res.redirect(`/mahasiswa`);
+    }catch{
+        req.flash(`error`,`terjadi kesalahan pada fungsi`);
+        res.redirect(`/mahasiswa`);
+    }
+})
 
 router.get(`/edit/(:id)`, async (req,res,next) => {
     let id = req.params.id;
-    let rows = await model_mahasiswa.editData(id);
+    let rows = await module_mahasiswa.editData(id);
     res.render(`mahasiswa/edit`, {
         id: rows[0].id_mahasiswa,
         nrp:             rows[0].nrp,
@@ -48,19 +63,40 @@ router.get(`/edit/(:id)`, async (req,res,next) => {
     });
 })
 
-router.post('/update/:id', handleAsync(async (req, res) => {
-  const { id } = req.params;
-  const data = { ...req.body };
-  await model_mahasiswa.updateData(id, data);
-  req.flash('success', 'Berhasil mengubah data');
-  res.redirect('/mahasiswa');
-}));
+router.post(`/update/(:id)`, async (req,res,next) => {
+    let id = req.params.id;
+    try{
+        let {nrp,nama_depan,nama_belakang,jenis_kelamin,agama,umur,tinggi_badan,gol_darah,alamat,hobi,email,no_telpon,asal_sekolah,tahun_lulus} = req.body;
+        let data = {
+            nrp,
+            nama_depan,
+            nama_belakang,
+            jenis_kelamin,
+            agama,
+            umur,
+            tinggi_badan,
+            gol_darah,
+            alamat,
+            hobi,
+            email,
+            no_telpon,
+            asal_sekolah,
+            tahun_lulus
+        };
+        await module_mahasiswa.updateData(id,data);
+        req.flash(`success`,`berhasil mengubah data`);
+        res.redirect(`/mahasiswa`);
+    }catch{
+        req.flash(`error`,`Terjadi kesalahan pada fungsi`);
+        res.redirect(`/mahasiswa`);
+    }
+})
 
-router.get('/delete/:id', handleAsync(async (req, res) => {
-  const { id } = req.params;
-  await model_mahasiswa.deleteData(id);
-  req.flash('success', 'Berhasil menghapus data');
-  res.redirect('/mahasiswa');
-}));
+router.get(`/delete/(:id)`, async (req,res,next) => {
+    let id = req.params.id;
+    await module_mahasiswa.deleteData(id);
+    req.flash(`success`,`berhasil menghapus data`);
+    res.redirect(`/mahasiswa`);
+})
 
 module.exports = router;
